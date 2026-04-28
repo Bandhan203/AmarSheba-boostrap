@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "tertiary-fixed": "#e0e3e5",
+                    "surface-variant": "#d3e4fe",
+                    "secondary-fixed": "#dae2fd",
+                    "on-primary-container": "#eeefff",
+                    "surface-dim": "#cbdbf5",
+                    "on-tertiary-container": "#eff1f3",
+                    "surface-container": "#e5eeff",
+                    "surface-tint": "#0053db",
+                    "outline": "#737686",
+                    "on-tertiary-fixed-variant": "#444749",
+                    "tertiary-container": "#6b6e70",
+                    "secondary-container": "#dae2fd",
+                    "on-surface": "#0b1c30",
+                    "inverse-on-surface": "#eaf1ff",
+                    "on-surface-variant": "#434655",
+                    "on-primary-fixed-variant": "#003ea8",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-fixed": "#00174b",
+                    "tertiary": "#525657",
+                    "on-secondary-fixed": "#131b2e",
+                    "secondary": "#565e74",
+                    "on-primary": "#ffffff",
+                    "surface": "#f8f9ff",
+                    "on-secondary-fixed-variant": "#3f465c",
+                    "surface-container-low": "#eff4ff",
+                    "background": "#f8f9ff",
+                    "tertiary-fixed-dim": "#c4c7c9",
+                    "secondary-fixed-dim": "#bec6e0",
+                    "inverse-primary": "#b4c5ff",
+                    "on-background": "#0b1c30",
+                    "surface-container-highest": "#d3e4fe",
+                    "surface-bright": "#f8f9ff",
+                    "on-error": "#ffffff",
+                    "on-tertiary-fixed": "#191c1e",
+                    "primary-fixed-dim": "#b4c5ff",
+                    "surface-container-high": "#dce9ff",
+                    "primary-container": "#2563eb",
+                    "on-error-container": "#93000a",
+                    "primary-fixed": "#dbe1ff",
+                    "primary": "#004ac6",
+                    "on-secondary-container": "#5c647a",
+                    "inverse-surface": "#213145",
+                    "error": "#ba1a1a",
+                    "outline-variant": "#c3c6d7",
+                    "error-container": "#ffdad6"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "base": "4px",
+                    "xxl": "80px",
+                    "gutter": "24px",
+                    "container-max": "1280px",
+                    "xl": "40px",
+                    "lg": "24px",
+                    "xs": "4px",
+                    "md": "16px",
+                    "sm": "8px"
+            },
+            "fontFamily": {
+                    "headline-sm": ["Manrope"],
+                    "display-lg": ["Manrope"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Manrope"],
+                    "body-sm": ["Inter"],
+                    "headline-md": ["Manrope"],
+                    "body-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "headline-sm": ["20px", {"lineHeight": "1.4", "fontWeight": "600"}],
+                    "display-lg": ["48px", {"lineHeight": "1.1", "letterSpacing": "-0.02em", "fontWeight": "800"}],
+                    "body-md": ["16px", {"lineHeight": "1.6", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "1", "letterSpacing": "0.03em", "fontWeight": "500"}],
+                    "label-md": ["14px", {"lineHeight": "1", "letterSpacing": "0.01em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "1.2", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-sm": ["14px", {"lineHeight": "1.5", "fontWeight": "400"}],
+                    "headline-md": ["24px", {"lineHeight": "1.3", "fontWeight": "700"}],
+                    "body-lg": ["18px", {"lineHeight": "1.6", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #f8f9ff 0%, #e5eeff 100%);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md">
+<!-- TopNavBar -->
+<header class="bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 shadow-sm dark:shadow-none docked full-width top-0 sticky z-50">
+<nav class="flex justify-between items-center w-full px-6 md:px-12 py-4 max-w-7xl mx-auto font-manrope font-medium tracking-tight">
+<div class="text-2xl font-extrabold text-blue-600 dark:text-blue-500">AmarSheba</div>
+<div class="hidden md:flex items-center gap-8">
+<a class="text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400 pb-1" href="#">Services</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-all duration-200" href="#">How it Works</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-all duration-200" href="#">Pricing</a>
+<a class="text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-300 transition-all duration-200" href="#">Become a Pro</a>
+</div>
+<div class="flex items-center gap-4">
+<button class="hidden lg:block text-slate-600 font-label-md hover:text-blue-600 transition-all">Login</button>
+<button class="bg-primary text-on-primary px-6 py-2.5 rounded-lg font-label-md hover:opacity-90 active:scale-95 transition-all">Book a Service</button>
+</div>
+</nav>
+</header>
+<main>
+<!-- Hero Section -->
+<section class="hero-gradient pt-16 pb-xxl px-6 overflow-hidden">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+<div class="relative z-10">
+<span class="inline-block py-1 px-3 rounded-full bg-surface-variant text-primary font-label-sm mb-6 uppercase tracking-wider">Trusted by 10k+ Households</span>
+<h1 class="font-display-lg text-display-lg text-on-surface mb-6">Professional Services <br/><span class="text-primary">at Your Doorstep.</span></h1>
+<p class="text-body-lg text-on-surface-variant mb-10 max-w-lg">Vetted experts for all your home needs. From deep cleaning to complex electrical work, we've got you covered.</p>
+<div class="bg-white p-2 rounded-xl shadow-lg flex flex-col md:flex-row gap-2 max-w-2xl border border-slate-100">
+<div class="flex-1 flex items-center px-4 border-r border-slate-100">
+<span class="material-symbols-outlined text-outline mr-3" data-icon="search">search</span>
+<input class="w-full py-3 border-none focus:ring-0 text-body-md outline-none" placeholder="What service do you need?" type="text"/>
+</div>
+<div class="flex-1 flex items-center px-4">
+<span class="material-symbols-outlined text-outline mr-3" data-icon="location_on">location_on</span>
+<input class="w-full py-3 border-none focus:ring-0 text-body-md outline-none" placeholder="Enter your area" type="text"/>
+</div>
+<button class="bg-primary text-on-primary px-8 py-3 rounded-lg font-label-md hover:bg-primary/90 transition-all">Search</button>
+</div>
+<div class="mt-8 flex gap-4 items-center">
+<div class="flex -space-x-3">
+<div class="w-10 h-10 rounded-full border-2 border-white bg-slate-200"></div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-slate-300"></div>
+<div class="w-10 h-10 rounded-full border-2 border-white bg-slate-400"></div>
+</div>
+<p class="text-body-sm text-on-surface-variant">4.9/5 Rating from our happy customers</p>
+</div>
+</div>
+<div class="relative lg:h-[600px] flex items-center justify-center">
+<div class="absolute w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl"></div>
+<img alt="Service professional" class="relative z-10 w-full max-w-md h-auto object-cover rounded-3xl shadow-2xl" data-alt="professional female service provider in blue uniform smiling confidently in a clean modern home setting with warm natural light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDJNjS0pE8g_JpR6oXCfR2j2LI8ZDjAByaOKU6CCy37XJzVFVMvQBEPqNIoQNWCHFpFJ--5cm4t9uVabPzxhpPUw_nN9oTEDRVWWKtr7Wznkd3DsL93MA29ckAcDN4VbNuUwOvuhFIHOxhlPeqUo96rOwwEcxLbyfoNFXjDQPFFAV1jdE99Pp432qzobIaiheVYH_85ut5VuxUUvpOqf2GHoalI1TVVSgf-L0ldLLS9sh8VCx5fSQ8ez0aqWnliShDXcRlcU7L324k"/>
+<div class="absolute top-10 right-0 glass-card p-4 rounded-2xl shadow-xl z-20 flex items-center gap-3">
+<div class="p-2 bg-green-100 rounded-full">
+<span class="material-symbols-outlined text-green-600" data-icon="verified_user">verified_user</span>
+</div>
+<div>
+<p class="font-label-md">Background Verified</p>
+<p class="text-[10px] text-slate-500 uppercase">Pro safety protocol</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Service Categories -->
+<section class="py-xxl px-6 bg-white">
+<div class="max-w-7xl mx-auto">
+<div class="flex justify-between items-end mb-12">
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-2">Explore Categories</h2>
+<p class="text-on-surface-variant">Find the right expert for every task</p>
+</div>
+<button class="text-primary font-label-md flex items-center gap-1 hover:gap-2 transition-all">View All <span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span></button>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+<!-- Category Card -->
+<div class="group p-6 bg-surface rounded-2xl text-center hover:bg-primary transition-all duration-300 cursor-pointer">
+<div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="cleaning_services">cleaning_services</span>
+</div>
+<h3 class="font-label-md group-hover:text-white">Maid</h3>
+</div>
+<div class="group p-6 bg-surface rounded-2xl text-center hover:bg-primary transition-all duration-300 cursor-pointer">
+<div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="directions_car">directions_car</span>
+</div>
+<h3 class="font-label-md group-hover:text-white">Driver</h3>
+</div>
+<div class="group p-6 bg-surface rounded-2xl text-center hover:bg-primary transition-all duration-300 cursor-pointer">
+<div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="cooking">cooking</span>
+</div>
+<h3 class="font-label-md group-hover:text-white">Chef</h3>
+</div>
+<div class="group p-6 bg-surface rounded-2xl text-center hover:bg-primary transition-all duration-300 cursor-pointer">
+<div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="plumbing">plumbing</span>
+</div>
+<h3 class="font-label-md group-hover:text-white">Plumber</h3>
+</div>
+<div class="group p-6 bg-surface rounded-2xl text-center hover:bg-primary transition-all duration-300 cursor-pointer">
+<div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="bolt">bolt</span>
+</div>
+<h3 class="font-label-md group-hover:text-white">Electrician</h3>
+</div>
+<div class="group p-6 bg-surface rounded-2xl text-center hover:bg-primary transition-all duration-300 cursor-pointer">
+<div class="w-14 h-14 bg-white rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary-container transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-white" data-icon="home_repair_service">home_repair_service</span>
+</div>
+<h3 class="font-label-md group-hover:text-white">Renovation</h3>
+</div>
+</div>
+</div>
+</section>
+<!-- Why Choose Us -->
+<section class="py-xxl px-6 bg-slate-50">
+<div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+<div class="relative">
+<img alt="Service execution" class="rounded-3xl shadow-lg aspect-square object-cover" data-alt="high-quality interior shot of a professional worker in white gloves carefully cleaning a modern living room with bright soft focus background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBR9g4kd4yTFtz9koEsXRVAnquXgxNPwOQfutgZZfdEzn-4krDwqtMn-kA3GSN9k6tQ7mFW22IP4PaxvVFGg_adHA1x9TqgJx3lJ0T7LkNFMvLQfp4CMLgEDUSg0Hm-9ghFQchE8ALWMvqJjY4ALtLHdv4k_rrwYV461ZHvj-eJBO1h0Sa2b1UrDa50zaAriNtuH4sQVlOFwsW7FyCgOTsB_oKamGEnkNr9c-gnxKPmQnJM_P_q3qN8offkKb-ZR1Qb7k_MHMOLleA"/>
+<div class="absolute -bottom-10 -right-10 bg-primary p-10 rounded-3xl hidden md:block">
+<p class="text-4xl font-extrabold text-white mb-2">100%</p>
+<p class="text-white/80 font-label-md">Satisfaction<br/>Guaranteed</p>
+</div>
+</div>
+<div>
+<h2 class="font-headline-lg text-headline-lg mb-8 leading-tight">Why AmarSheba is your <br/>best home partner?</h2>
+<div class="space-y-8">
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary" data-icon="verified">verified</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm mb-2">Vetted Professionals</h3>
+<p class="text-on-surface-variant">Every pro on our platform undergoes rigorous background checks and skill assessments.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary" data-icon="payments">payments</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm mb-2">Transparent Pricing</h3>
+<p class="text-on-surface-variant">No hidden fees or surprises. You know exactly what you'll pay before you book.</p>
+</div>
+</div>
+<div class="flex gap-6">
+<div class="flex-shrink-0 w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-md">
+<span class="material-symbols-outlined text-primary" data-icon="support_agent">support_agent</span>
+</div>
+<div>
+<h3 class="font-headline-sm text-headline-sm mb-2">24/7 Priority Support</h3>
+<p class="text-on-surface-variant">Our dedicated team is here to help you at any step of your service journey.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Trending Services (Bento Style) -->
+<section class="py-xxl px-6">
+<div class="max-w-7xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg mb-12 text-center">Trending in your area</h2>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 auto-rows-[280px]">
+<div class="md:col-span-2 relative rounded-3xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="professional home cleaning setup with tidy laundry and organized shelves in a minimalist bright apartment" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIluUEdnk52qdqFDsNk_SCO4hA9orBTpljhh8FL5cX9m4yvazTeUmCQpCaOPy-0PPgmcnQS9Rg8b05JDId5_ZYoX0t_K7yu5vwTImqi1pZNq8HREiY3xIMiNukmysmNxmtL1Iwk7qO6xtANmj3KiuoLB9lkEZK2khOn4knAPqFSzcSZPs48wOtXAzcRke9Hkn3DaXW_TmrSWQuacWLpgJNpibwig_7BLLU_IllYquw4szJaDbvf1SWx3DP5hhVkgAkpyw-gegDpBM"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<span class="bg-primary/20 backdrop-blur-md px-3 py-1 rounded-full text-xs font-label-md mb-3 inline-block">MOST POPULAR</span>
+<h3 class="text-3xl font-bold">Full Home Sanitization</h3>
+<p class="text-white/80 mt-2">Starts from $49</p>
+</div>
+</div>
+<div class="relative rounded-3xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="electrician fixing light fixture on ceiling in a modern living room interior" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAuP1OqAkzvdRppp7Uq6PjMNrTIO8mKyi_qowVho9dX_ZctP20_DjgeGxFUzyx0aod84hszRow8b36hk141nN4dWy093t5bCByYGGIbWzH1Uja7YMwdRMB2ZcJQdshzPEbkEVY0TacRxF_volebSg9S-CNkdImyO5nga9Ru2ELgKppeD-JrgM6wir5dNze18f_nt772qX6w4Rup0bn-hFaG8tW12dfguVUUCIMQBBRwf2fDoWkPVdP25xTbf_cQlzIGY8lJngKcvFU"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h3 class="text-xl font-bold">Electrical Repair</h3>
+<p class="text-white/80">From $25/hr</p>
+</div>
+</div>
+<div class="relative rounded-3xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="plumber working on a kitchen sink with tools spread out on a towel" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1xj5uugrzXBAIDJYjqpTRgE3rh_P80t4UOqfTt_Dp19i55mEsx-eoDCZuH9z2i6TZP9R2fMPWLZ7Rqtj9P_jbIQpqgYMc6ltByXzdan-K-CzTBfMxjAi86XWBfLbMADYjFbrGW-jJSXoYX86jHSf7i0j9Sme57fsTns0POp9hxLI3EfIpQW9zJrKrve1VED9Lz085VwIVAM7z9hUioLgiqyk4LQrhn8CZjiPiwLGIRrVmUmLTA7K3mbQl0WlALsYNjR56TSrcryo"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 text-white">
+<h3 class="text-xl font-bold">Emergency Plumbing</h3>
+<p class="text-white/80">On call 24/7</p>
+</div>
+</div>
+<div class="md:col-span-2 relative rounded-3xl overflow-hidden group cursor-pointer">
+<img class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" data-alt="private chef preparing a gourmet meal in a professional home kitchen with steam rising from a pan" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDmwRO90MNgmla_mOzPUfJgbaVNlbNftZzcJkhVA_BiN830jYs43n1aPQFePNt2cBEZ8WujUmkovmeWHYCnl6IjvwOzAv1cauFRgMv8wTaW3ko31vp1CJ5O9YO-vqR1-cMoiiZ0lZjl88jKvQiFocbIZmXGzmEf0h0UdVTi0uxxGiDQgMjt2G-xJNA4pw8uBAgqHgLHJlHULjKsP5TTYFZyMXl_vnyHnkYPcD1K3tH-g-8mW8ZR9DIxR4DG2KadIlfbfjn7KSIkInc"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-8 left-8 text-white">
+<h3 class="text-3xl font-bold">Personal Chef Services</h3>
+<p class="text-white/80 mt-2">Customized meal plans for families</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-xxl px-6 bg-surface-container-low">
+<div class="max-w-7xl mx-auto text-center">
+<h2 class="font-headline-lg text-headline-lg mb-4">How it works</h2>
+<p class="text-on-surface-variant mb-16">Simple 3-step process to get things done</p>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+<!-- Connector line for desktop -->
+<div class="hidden md:block absolute top-1/4 left-1/4 right-1/4 h-0.5 border-t-2 border-dashed border-primary/20 -z-0"></div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-20 h-20 bg-primary text-on-primary rounded-2xl flex items-center justify-center text-3xl font-bold mb-6 shadow-xl shadow-primary/20">1</div>
+<h3 class="font-headline-sm text-headline-sm mb-3">Choose a Service</h3>
+<p class="text-on-surface-variant max-w-xs">Select the service you need from our extensive list of categories.</p>
+</div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-20 h-20 bg-primary text-on-primary rounded-2xl flex items-center justify-center text-3xl font-bold mb-6 shadow-xl shadow-primary/20">2</div>
+<h3 class="font-headline-sm text-headline-sm mb-3">Pick a Pro</h3>
+<p class="text-on-surface-variant max-w-xs">Browse profiles, read reviews, and choose your preferred professional.</p>
+</div>
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-20 h-20 bg-primary text-on-primary rounded-2xl flex items-center justify-center text-3xl font-bold mb-6 shadow-xl shadow-primary/20">3</div>
+<h3 class="font-headline-sm text-headline-sm mb-3">Sit Back &amp; Relax</h3>
+<p class="text-on-surface-variant max-w-xs">Your pro arrives on time and completes the job with perfection.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Featured Providers -->
+<section class="py-xxl px-6">
+<div class="max-w-7xl mx-auto">
+<div class="flex justify-between items-end mb-12">
+<h2 class="font-headline-lg text-headline-lg">Top Rated Professionals</h2>
+<div class="flex gap-2">
+<button class="w-10 h-10 border border-slate-200 rounded-full flex items-center justify-center hover:bg-slate-50 transition-all"><span class="material-symbols-outlined" data-icon="chevron_left">chevron_left</span></button>
+<button class="w-10 h-10 border border-slate-200 rounded-full flex items-center justify-center hover:bg-slate-50 transition-all"><span class="material-symbols-outlined" data-icon="chevron_right">chevron_right</span></button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<!-- Provider Card -->
+<div class="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="professional headshot of a friendly female home cleaner in a uniform" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9Ay6vAoWD9zTk0cKSGQePM1nFRdZG-gSHiNglRG6kui9bq2vLJfk8b-32iId9jm4CqWRjua4tWCwRQF89YQ4WRthXZtlO3mFPUFqCuSQDymq-oyOi_D2SAmgMWaLDVKzHnDrR_gA9QQSzzSOmN4rbp4YpKBVcpxsy_wjBrhC9k_2Fj8wVNBkVgDeGhWTad1xCUrkd-qPO19wncipBH9tS_oNJBMumjZbPM5DWz0waTFKrP9Zgm1S7Lkn0A2kVqORwOWBmSz_Pfao"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm mb-1">Sarah Johnson</h3>
+<p class="text-body-sm text-on-surface-variant mb-4">Deep Cleaning Specialist</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-50">
+<div>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Hourly Rate</p>
+<p class="text-lg font-bold text-primary">$35</p>
+</div>
+<button class="bg-surface-container hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="portrait of a male professional electrician in his 30s holding tools" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZundXpPU50e1sn7WkVD-SkpnimIASaQ00zm1Vuj1PzyhbmYM_t5jto7Ee7NPgmpiSATsIOR7vxyAa9S6USu5_SJ2qDYmUlLNRgvHU5MkDYHUrH4XGE4CwroBkKZeI7nmbETSnjNtQ70rMyMAafMDEV5rqMXTboXi8QvV47OlIorkMUFBr_a9Nf3lFIZ2xeI8_ARZFgeXPT4OD8fy00SbrZmuBbvLqsJgfrXmIQ-P6zIvi-D41CSBSCtDfNzvlICmvilK58NXUlHU"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill">star</span>
+<span class="text-xs font-bold">5.0</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm mb-1">David Miller</h3>
+<p class="text-body-sm text-on-surface-variant mb-4">Master Electrician</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-50">
+<div>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Hourly Rate</p>
+<p class="text-lg font-bold text-primary">$55</p>
+</div>
+<button class="bg-surface-container hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="professional male driver in smart attire leaning against a premium vehicle" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCgKUy38cNIw-4zNNIE4-t3g6NkWGFREH5GwUusjWW0zYbz4_Wz_PX1c6aOgR8QgxqdhRIAgiUcU7SYwJxjMnnKKleeIYMkqTXRcR4gqisi4uYXLS9mNf5IDaHmk5rdQwJUSfs0rZWui0lxsB4Cm494dVhuANx6tgI2_LkO8vSkcS4zt3nNGZDogHtOzlY2w9BWLqsB34KOW8F8shPhk8pcEl51Vu74FadtKWHNYOtQU96HntnypjFBwXhvUq5tNqcPUqd2mlbBFb0"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill">star</span>
+<span class="text-xs font-bold">4.8</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm mb-1">James Wilson</h3>
+<p class="text-body-sm text-on-surface-variant mb-4">Premium Chauffeur</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-50">
+<div>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Hourly Rate</p>
+<p class="text-lg font-bold text-primary">$40</p>
+</div>
+<button class="bg-surface-container hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">Book Now</button>
+</div>
+</div>
+</div>
+<div class="bg-white border border-slate-100 rounded-3xl overflow-hidden hover:shadow-xl transition-all group">
+<div class="relative h-48">
+<img class="w-full h-full object-cover" data-alt="professional chef in white coat preparing vegetables in a modern kitchen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBqroBZKQ2Mn8tGpM9IkeGeEwEv-QuUL4Ck8Hyv6wrbpfkS37ZrCPQpIr6-YKLlS0V_lm7zrAJUJh8mriJF7AqjN36gzJl0lm6kHEoKaiboFjROEk3cL0Lj8BgAR8oV0jsVPxhzQF-UPLAgpnepH1KkvSrgC0I8m7jpGNOpyw6MmT8zCQe1bM1lgLmp2NPvNQ3ZS8KTUM4iV75yLyXoFJFxuvfiksDWVD8zDNFecEoYDsN35Vg2m8iTojyczYza8OmISOv33DwqTqQ"/>
+<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-md px-2 py-1 rounded-lg flex items-center gap-1">
+<span class="material-symbols-outlined text-yellow-500 text-sm" data-icon="star" data-weight="fill">star</span>
+<span class="text-xs font-bold">4.9</span>
+</div>
+</div>
+<div class="p-6">
+<h3 class="font-headline-sm text-headline-sm mb-1">Elena Rodriguez</h3>
+<p class="text-body-sm text-on-surface-variant mb-4">Culinary Expert</p>
+<div class="flex items-center justify-between pt-4 border-t border-slate-50">
+<div>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Daily Rate</p>
+<p class="text-lg font-bold text-primary">$120</p>
+</div>
+<button class="bg-surface-container hover:bg-primary hover:text-white px-4 py-2 rounded-lg text-sm font-bold transition-all">Book Now</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Promotional Banner -->
+<section class="px-6 py-12">
+<div class="max-w-7xl mx-auto bg-primary rounded-[40px] p-12 relative overflow-hidden flex flex-col md:flex-row items-center justify-between">
+<div class="relative z-10">
+<h2 class="text-white text-4xl font-extrabold mb-4">First Booking Discount</h2>
+<p class="text-white/80 text-xl max-w-md">Get 20% off your first service booking with code <span class="bg-white/20 px-2 py-1 rounded text-white font-mono">FIRST20</span></p>
+<button class="mt-8 bg-white text-primary px-10 py-4 rounded-full font-bold hover:scale-105 transition-all">Claim Offer Now</button>
+</div>
+<div class="absolute top-0 right-0 w-1/3 h-full opacity-20 hidden lg:block">
+<span class="material-symbols-outlined text-[300px] text-white" data-icon="redeem">redeem</span>
+</div>
+</div>
+</section>
+<!-- FAQ Section -->
+<section class="py-xxl px-6">
+<div class="max-w-3xl mx-auto">
+<h2 class="font-headline-lg text-headline-lg mb-12 text-center">Frequently Asked Questions</h2>
+<div class="space-y-4">
+<div class="p-6 bg-white rounded-2xl border border-slate-100">
+<div class="flex justify-between items-center cursor-pointer">
+<h3 class="font-headline-sm">How are professionals verified?</h3>
+<span class="material-symbols-outlined text-primary" data-icon="expand_more">expand_more</span>
+</div>
+<p class="mt-4 text-on-surface-variant">We conduct a multi-step background check, including identity verification, criminal record checks, and skill-specific practical tests before onboarding any professional.</p>
+</div>
+<div class="p-6 bg-white rounded-2xl border border-slate-100">
+<div class="flex justify-between items-center cursor-pointer">
+<h3 class="font-headline-sm">What if I'm not satisfied with the service?</h3>
+<span class="material-symbols-outlined text-primary" data-icon="add">add</span>
+</div>
+</div>
+<div class="p-6 bg-white rounded-2xl border border-slate-100">
+<div class="flex justify-between items-center cursor-pointer">
+<h3 class="font-headline-sm">Can I reschedule my booking?</h3>
+<span class="material-symbols-outlined text-primary" data-icon="add">add</span>
+</div>
+</div>
+<div class="p-6 bg-white rounded-2xl border border-slate-100">
+<div class="flex justify-between items-center cursor-pointer">
+<h3 class="font-headline-sm">Is there any insurance for damages?</h3>
+<span class="material-symbols-outlined text-primary" data-icon="add">add</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 font-manrope text-sm leading-relaxed">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-10 max-w-7xl mx-auto px-6 py-16">
+<div class="col-span-1 md:col-span-1">
+<span class="text-xl font-bold text-slate-900 dark:text-white mb-4 block">AmarSheba</span>
+<p class="text-slate-500 dark:text-slate-400 mb-6">Your trusted home service partner for a better lifestyle.</p>
+<div class="flex gap-4">
+<span class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:bg-blue-500 hover:text-white transition-all cursor-pointer material-symbols-outlined" data-icon="share">share</span>
+<span class="w-8 h-8 bg-slate-200 rounded-full flex items-center justify-center text-slate-600 hover:bg-blue-500 hover:text-white transition-all cursor-pointer material-symbols-outlined" data-icon="public">public</span>
+</div>
+</div>
+<div>
+<h4 class="font-bold mb-4">Company</h4>
+<ul class="space-y-3">
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">About Us</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">Contact Support</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">Terms of Service</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">Privacy Policy</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Services</h4>
+<ul class="space-y-3">
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">Plumbing</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">Electrical</a></li>
+<li><a class="text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors hover:underline decoration-blue-500/30 underline-offset-4" href="#">Cleaning</a></li>
+</ul>
+</div>
+<div>
+<h4 class="font-bold mb-4">Newsletter</h4>
+<p class="text-slate-500 mb-4">Subscribe for updates and offers.</p>
+<div class="flex">
+<input class="bg-white border border-slate-200 px-4 py-2 rounded-l-lg w-full focus:outline-none" placeholder="Email" type="email"/>
+<button class="bg-primary text-white px-4 py-2 rounded-r-lg"><span class="material-symbols-outlined" data-icon="send">send</span></button>
+</div>
+</div>
+</div>
+<div class="border-t border-slate-200 dark:border-slate-800 py-8 text-center text-slate-500">
+<p>© 2024 AmarSheba. Your trusted home service partner.</p>
+</div>
+</footer>
+</body></html>
