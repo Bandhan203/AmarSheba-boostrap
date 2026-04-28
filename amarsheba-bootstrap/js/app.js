@@ -860,6 +860,7 @@
     const linksByKind = {
       customer: [
         { id: 'dashboard', label: 'Dashboard', href: 'customer-dashboard.html', icon: 'fa-solid fa-chart-line' },
+        { id: 'find', label: 'Find Services', href: 'providers.html', icon: 'fa-solid fa-location-dot' },
         { id: 'bookings', label: 'My Bookings', href: 'my-bookings.html', icon: 'fa-solid fa-clipboard-list' },
         { id: 'wallet', label: 'Wallet', href: 'wallet.html', icon: 'fa-solid fa-wallet' },
         { id: 'claims', label: 'Claims', href: 'claims-center.html', icon: 'fa-regular fa-circle-question' },
@@ -867,14 +868,17 @@
       ],
       provider: [
         { id: 'dashboard', label: 'Dashboard', href: 'provider-app.html', icon: 'fa-solid fa-chart-line' },
+        { id: 'bookings', label: 'Live Bookings', href: 'provider-bookings.html', icon: 'fa-solid fa-calendar-check' },
         { id: 'team', label: 'Team', href: 'provider-team.html', icon: 'fa-solid fa-users' },
         { id: 'earnings', label: 'Earnings', href: 'provider-earnings-report.html', icon: 'fa-solid fa-money-bill-trend-up' },
-        { id: 'kyc', label: 'Verification', href: 'provider-kyc.html', icon: 'fa-solid fa-shield-halved' }
+        { id: 'kyc', label: 'Verification', href: 'provider-kyc.html', icon: 'fa-solid fa-shield-halved' },
+        { id: 'profile', label: 'Profile', href: 'provider-profile.html', icon: 'fa-regular fa-user' }
       ],
       resource: [
         { id: 'dashboard', label: 'Dashboard', href: 'resource-app.html', icon: 'fa-solid fa-briefcase' },
         { id: 'assignments', label: 'Assignments', href: 'resource-assignments.html', icon: 'fa-solid fa-list-check' },
-        { id: 'messages', label: 'Messages', href: 'messages.html', icon: 'fa-regular fa-envelope' },
+        { id: 'history', label: 'Completed', href: 'resource-history.html', icon: 'fa-solid fa-circle-check' },
+        { id: 'messages', label: 'Messages', href: 'resource-messages.html', icon: 'fa-regular fa-envelope' },
         { id: 'profile', label: 'Profile', href: 'resource-profile.html', icon: 'fa-regular fa-user' }
       ],
       admin: [
@@ -902,18 +906,49 @@
   function renderCustomerDashboard() {
     return renderSimpleDashboardPage('customer', 'Customer Dashboard', `
       <div class="row g-4">
+        ${[
+          ['Active Bookings', db.bookings.filter((booking) => booking.status === 'upcoming').length, 'fa-solid fa-calendar-check', '#1E88E5', '#E3F2FD'],
+          ['Wallet Balance', T.currency(db.wallet.currentBalance), 'fa-solid fa-wallet', '#4CAF50', '#E8F5E9'],
+          ['Open Claims', db.claims.length, 'fa-solid fa-shield-heart', '#FF9800', '#FFF3E0'],
+          ['Saved Threads', db.threads.length, 'fa-regular fa-comments', '#7B1FA2', '#F3E5F5']
+        ].map((card) => `
+          <div class="col-md-6 col-xl-3">
+            <div class="ag-card h-100">
+              <div class="d-flex justify-content-between align-items-start mb-3">
+                <div class="small text-muted">${card[0]}</div>
+                <div class="rounded-4 d-flex align-items-center justify-content-center" style="width:42px;height:42px;background:${card[4]};color:${card[3]};">
+                  <i class="${card[2]}"></i>
+                </div>
+              </div>
+              <div class="display-6 fw-extrabold">${card[1]}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="row g-4 mt-1">
         <div class="col-lg-8">
           <div class="ag-card">
-            <h4 class="fw-bold mb-4">Upcoming Bookings</h4>
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h4 class="fw-bold mb-1">Upcoming Bookings</h4>
+                <div class="small text-muted">Track scheduled jobs, provider arrival, and payment status.</div>
+              </div>
+              <a href="my-bookings.html" class="small fw-semibold text-primary-mirror text-decoration-none">View all</a>
+            </div>
             <div class="d-grid gap-3">
               ${db.bookings.map((booking) => `
                 <a href="booking-tracking.html" class="text-decoration-none text-dark">
-                  <div class="border rounded-4 p-3">
-                    <div class="d-flex justify-content-between mb-2">
-                      <div class="fw-bold">${booking.service}</div>
-                      <div class="text-primary-mirror fw-bold">${T.currency(booking.amount)}</div>
+                  <div class="rounded-4 border p-3">
+                    <div class="d-flex justify-content-between align-items-start gap-3">
+                      <div>
+                        <div class="fw-bold">${booking.service}</div>
+                        <div class="small text-muted mt-1">${booking.providerName} | ${booking.date} | ${booking.time}</div>
+                        <div class="smaller text-muted mt-1">${booking.address}</div>
+                      </div>
+                      <div class="text-end">
+                        <div class="fw-bold text-primary-mirror">${T.currency(booking.amount)}</div>
+                        <span class="badge ${booking.status === 'completed' ? 'bg-secondary-subtle text-secondary' : 'bg-primary-subtle text-primary'} text-capitalize mt-2">${booking.status}</span>
+                      </div>
                     </div>
-                    <div class="small text-muted">${booking.providerName} | ${booking.date} | ${booking.time}</div>
                   </div>
                 </a>`).join('')}
             </div>
@@ -921,32 +956,98 @@
         </div>
         <div class="col-lg-4">
           <div class="ag-card">
-            <h4 class="fw-bold mb-4">Quick Links</h4>
+            <h4 class="fw-bold mb-4">Quick Actions</h4>
             <div class="d-grid gap-2">
-              <a href="booking.html" class="btn btn-blue rounded-4">Book a Service</a>
-              <a href="wallet.html" class="btn btn-light border-light rounded-4">View Wallet</a>
-              <a href="customer-profile.html" class="btn btn-light border-light rounded-4">Profile Settings</a>
+              <a href="providers.html" class="btn btn-blue rounded-4 py-3">Find Services</a>
+              <a href="booking.html" class="btn btn-light border rounded-4 py-3">Book a Service</a>
+              <a href="wallet.html" class="btn btn-light border rounded-4 py-3">View Wallet</a>
+              <a href="claims-center.html" class="btn btn-light border rounded-4 py-3">Open Help Center</a>
+            </div>
+          </div>
+          <div class="ag-card mt-4">
+            <h4 class="fw-bold mb-3">Popular Categories</h4>
+            <div class="row g-2">
+              ${db.categories.slice(0, 6).map((category) => `
+                <div class="col-6">
+                  <a href="providers.html?category=${category.id}" class="text-decoration-none">
+                    <div class="rounded-4 border p-3 text-center h-100">
+                      <div class="fs-4 mb-2">${category.emoji}</div>
+                      <div class="small fw-semibold text-dark">${category.name}</div>
+                    </div>
+                  </a>
+                </div>`).join('')}
             </div>
           </div>
         </div>
-      </div>`);
+      </div>`, 'dashboard');
   }
 
   function renderProviderDashboard() {
-    return renderSimpleDashboardPage('provider', 'Provider Dashboard', `
+    return renderSimpleDashboardPage('provider', 'Provider Hub', `
       <div class="row g-4">
         ${[
-          ['Gross Month', T.currency(db.providerOps.earnings.grossMonth)],
-          ['Net After Commission', T.currency(db.providerOps.earnings.netAfterCommission)],
-          ['Pending Settlement', T.currency(db.providerOps.earnings.pendingSettlement)]
-        ].map((card) => `<div class="col-md-4"><div class="ag-card"><div class="small text-muted mb-2">${card[0]}</div><div class="display-6 fw-extrabold">${card[1]}</div></div></div>`).join('')}
+          ['New Jobs', 12, 'Today', 'fa-solid fa-calendar-day', '#FF9800', '#FFF3E0'],
+          ['Completed', 48, 'This Week', 'fa-solid fa-circle-check', '#4CAF50', '#E8F5E9'],
+          ['Active Techs', '6/8', 'Online', 'fa-solid fa-users', '#1E88E5', '#E3F2FD'],
+          ['Pending Payout', 'Tk 14,200', 'Next: Fri', 'fa-solid fa-chart-column', '#7B1FA2', '#F3E5F5'],
+          ['Rating', '4.8', 'High', 'fa-solid fa-star', '#F9A825', '#FFF8E1']
+        ].map((card) => `
+          <div class="col-md-6 col-xl">
+            <div class="ag-card h-100">
+              <div class="rounded-4 d-flex align-items-center justify-content-center mb-3" style="width:38px;height:38px;background:${card[5]};color:${card[4]};">
+                <i class="${card[3]}"></i>
+              </div>
+              <div class="small text-muted">${card[0]}</div>
+              <div class="fs-3 fw-extrabold">${card[1]}</div>
+              <div class="smaller text-muted mt-1">${card[2]}</div>
+            </div>
+          </div>`).join('')}
       </div>
-      <div class="ag-card mt-4">
-        <h4 class="fw-bold mb-4">Resource Team</h4>
-        <div class="d-grid gap-3">
-          ${db.providerOps.team.map((member) => `<div class="border rounded-4 p-3 d-flex justify-content-between align-items-center"><div><div class="fw-bold">${member.name}</div><div class="small text-muted">${member.skill}</div></div><span class="badge bg-blue-soft rounded-pill">${member.status}</span></div>`).join('')}
+      <div class="row g-4 mt-1">
+        <div class="col-lg-8">
+          <div class="ag-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <div>
+                <h4 class="fw-bold mb-1">Profit Analytics</h4>
+                <div class="small text-muted">Weekly revenue and throughput snapshot for the provider account.</div>
+              </div>
+              <span class="badge bg-success-subtle text-success">+14.2% vs last month</span>
+            </div>
+            <div class="d-grid gap-3">
+              ${[
+                ['Mon', 82000],
+                ['Tue', 96000],
+                ['Wed', 91000],
+                ['Thu', 108000],
+                ['Fri', 123000],
+                ['Sat', 118000]
+              ].map((item) => `
+                <div>
+                  <div class="d-flex justify-content-between small mb-2"><span class="fw-semibold">${item[0]}</span><span class="text-muted">${T.currency(item[1])}</span></div>
+                  <div class="progress" style="height:10px;"><div class="progress-bar" style="width:${Math.round((item[1] / 130000) * 100)}%;background:#FF9800;"></div></div>
+                </div>`).join('')}
+            </div>
+          </div>
         </div>
-      </div>`);
+        <div class="col-lg-4">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-4">Technician Tracking</h4>
+            <div class="rounded-4 bg-light border p-4 text-center">
+              <div class="display-6 mb-3 text-primary-mirror"><i class="fa-solid fa-map-location-dot"></i></div>
+              <div class="fw-semibold">Map Interface Active</div>
+              <div class="small text-muted mt-1">3 technicians en-route across Gulshan, Banani, and Dhanmondi.</div>
+            </div>
+            <div class="rounded-4 bg-white border p-3 mt-3">
+              <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="rounded-circle bg-success" style="width:8px;height:8px;"></span>
+                <div class="small fw-semibold">Arif Hossain</div>
+                <div class="smaller text-muted ms-auto">En-route to Gulshan</div>
+              </div>
+              <div class="progress" style="height:8px;"><div class="progress-bar bg-success" style="width:66%;"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>`, 'dashboard');
   }
 
   function renderResourceDashboard() {
@@ -1079,6 +1180,642 @@
           </div>
         </div>
       </div>`, 'profile');
+  }
+
+  function renderCustomerBookingsPage() {
+    const upcomingBookings = db.bookings.filter((booking) => booking.status === 'upcoming');
+    const pastBookings = db.bookings.filter((booking) => booking.status !== 'upcoming');
+    return renderSimpleDashboardPage('customer', 'My Bookings', `
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <div class="ag-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="fw-bold mb-0">Upcoming</h4>
+              <span class="badge bg-primary-subtle text-primary">${upcomingBookings.length} scheduled</span>
+            </div>
+            <div class="d-grid gap-3">
+              ${upcomingBookings.map((booking) => `
+                <div class="rounded-4 border p-3">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <div class="fw-bold">${booking.providerName}</div>
+                      <div class="small text-muted">${booking.category} | ${booking.service}</div>
+                      <div class="small text-muted mt-2">${booking.date} | ${booking.time} | ${booking.duration} hr</div>
+                      <div class="smaller text-muted mt-1">${booking.address}</div>
+                    </div>
+                    <div class="text-end">
+                      <div class="fw-bold text-primary-mirror">${T.currency(booking.amount)}</div>
+                      <div class="d-grid gap-2 mt-2">
+                        <a href="booking-tracking.html" class="btn btn-sm btn-blue rounded-3">Track</a>
+                        <button class="btn btn-sm btn-light border rounded-3">Reschedule</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-5">
+          <div class="ag-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="fw-bold mb-0">History</h4>
+              <span class="badge bg-secondary-subtle text-secondary">${pastBookings.length} closed</span>
+            </div>
+            <div class="d-grid gap-3">
+              ${pastBookings.map((booking) => `
+                <div class="rounded-4 bg-light p-3">
+                  <div class="d-flex justify-content-between">
+                    <div>
+                      <div class="fw-semibold">${booking.service}</div>
+                      <div class="smaller text-muted">${booking.providerName}</div>
+                    </div>
+                    <span class="badge ${booking.status === 'completed' ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'} text-capitalize">${booking.status}</span>
+                  </div>
+                  <div class="smaller text-muted mt-2">${booking.date} | ${booking.address}</div>
+                  <div class="d-flex gap-2 mt-3">
+                    <a href="providers.html" class="btn btn-sm btn-light border rounded-3 flex-fill">Rebook</a>
+                    <button class="btn btn-sm btn-warning-subtle text-warning rounded-3 flex-fill">Rate</button>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`, 'bookings');
+  }
+
+  function renderCustomerClaimsPage() {
+    return renderSimpleDashboardPage('customer', 'Claims & Support', `
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-4">File a New Claim</h4>
+            <div class="d-grid gap-3">
+              <select class="form-select rounded-4 py-3">
+                <option>Poor workmanship</option>
+                <option>Property damage</option>
+                <option>Incomplete work</option>
+              </select>
+              <textarea class="form-control rounded-4" rows="5" placeholder="Describe issue, timeline, and expected resolution"></textarea>
+              <input class="form-control rounded-4 py-3" type="file" multiple>
+              <button class="btn btn-blue rounded-4 py-3">Submit Claim</button>
+            </div>
+            <div class="small text-muted mt-3">Provider response window: 48 hours. Cases route to mediation automatically if unresolved.</div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-4">Claim Status Tracking</h4>
+            <div class="d-grid gap-3">
+              ${db.claims.map((claim) => `
+                <div class="rounded-4 border p-3">
+                  <div class="d-flex justify-content-between align-items-start gap-3">
+                    <div>
+                      <div class="fw-semibold">${claim.id} | ${claim.bookingId}</div>
+                      <div class="small text-muted mt-1">Reason: ${claim.reason}</div>
+                      <div class="smaller text-muted mt-1">Created: ${claim.createdAt}</div>
+                    </div>
+                    <span class="badge bg-warning-subtle text-warning">${claim.stage}</span>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`, 'claims');
+  }
+
+  function renderCustomerMessagesPage() {
+    return renderSimpleDashboardPage('customer', 'Communication Center', `
+      <div class="row g-4">
+        <div class="col-lg-5">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-4">Active Job Threads</h4>
+            <div class="d-grid gap-3">
+              ${db.threads.map((thread) => `
+                <div class="rounded-4 border p-3">
+                  <div class="d-flex justify-content-between align-items-center gap-3">
+                    <div>
+                      <div class="fw-semibold">${thread.id} | ${thread.bookingId}</div>
+                      <div class="small text-muted mt-1">${thread.participants.join(' | ')}</div>
+                    </div>
+                    ${thread.unreadCount ? `<span class="badge bg-primary-subtle text-primary">${thread.unreadCount} unread</span>` : '<span class="badge bg-light text-muted">Seen</span>'}
+                  </div>
+                  <div class="small text-muted mt-2">${thread.lastMessage}</div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-7">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-4">Job Chat</h4>
+            <div class="d-grid gap-3 mb-4">
+              ${[
+                ['Customer', 'Please confirm material quality before start.', '10:12 AM', 'bg-primary-subtle'],
+                ['Provider', 'Confirmed. Sharing material sheet and quote breakdown now.', '10:15 AM', 'bg-light'],
+                ['Customer', 'Great. Uploading room photos and measurements.', '10:18 AM', 'bg-primary-subtle']
+              ].map((message) => `
+                <div class="rounded-4 p-3 ${message[3]}">
+                  <div class="d-flex justify-content-between small mb-1">
+                    <span class="fw-semibold">${message[0]}</span>
+                    <span class="text-muted">${message[2]}</span>
+                  </div>
+                  <div class="small">${message[1]}</div>
+                </div>`).join('')}
+            </div>
+            <div class="rounded-4 border border-dashed p-3 mb-3">
+              <div class="small text-muted mb-2">Share photo/document</div>
+              <input type="file" class="form-control rounded-4 py-2">
+            </div>
+            <div class="d-flex gap-2">
+              <input class="form-control rounded-4 py-3" placeholder="Type message...">
+              <button class="btn btn-blue rounded-4 px-4">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>`);
+  }
+
+  function renderProviderBookingsPage() {
+    return renderSimpleDashboardPage('provider', 'Live Bookings', `
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="fw-bold mb-1">Active Orders</h4>
+          <div class="small text-muted">Assign field technicians, confirm arrival, and track order status.</div>
+        </div>
+        <div class="d-flex gap-2">
+          <span class="badge bg-warning-subtle text-warning">3 New</span>
+          <span class="badge bg-primary-subtle text-primary">2 Ongoing</span>
+        </div>
+      </div>
+      <div class="d-grid gap-3">
+        ${[
+          { id: 'ORD-942', client: 'Nusrat Jahan', service: 'AC Maintenance', time: '10:30 AM', status: 'Ongoing', tech: 'Arif' },
+          { id: 'ORD-945', client: 'Karim Ahmed', service: 'Full Home Clean', time: '01:00 PM', status: 'Confirmed', tech: 'Unassigned' },
+          { id: 'ORD-948', client: 'Sumi Akter', service: 'Basin Repair', time: '04:30 PM', status: 'New', tech: 'Unassigned' }
+        ].map((order) => `
+          <div class="ag-card">
+            <div class="d-flex flex-column flex-lg-row justify-content-between gap-3">
+              <div class="d-flex gap-3">
+                <div class="rounded-4 text-white d-flex flex-column align-items-center justify-content-center fw-bold" style="width:62px;height:62px;background:${order.status === 'Ongoing' ? '#1E88E5' : order.status === 'Confirmed' ? '#FF9800' : '#94A3B8'};">
+                  <div class="smaller">${order.time.split(' ')[1]}</div>
+                  <div>${order.time.split(' ')[0]}</div>
+                </div>
+                <div>
+                  <div class="fw-bold">${order.service}</div>
+                  <div class="small text-muted">${order.client} | ${order.id}</div>
+                  <div class="smaller text-muted mt-2">Assigned tech: ${order.tech}</div>
+                </div>
+              </div>
+              <div class="text-lg-end">
+                <span class="badge ${order.status === 'Ongoing' ? 'bg-primary-subtle text-primary' : order.status === 'Confirmed' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary'}">${order.status}</span>
+                <div class="d-flex gap-2 mt-3 justify-content-lg-end">
+                  <a href="provider-booking-detail.html" class="btn btn-sm btn-blue rounded-3">Open</a>
+                  <a href="provider-assignment.html" class="btn btn-sm btn-light border rounded-3">Assign</a>
+                </div>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>`, 'bookings');
+  }
+
+  function renderProviderTeamPage() {
+    return renderSimpleDashboardPage('provider', 'Resource Management', `
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">Team Management</h4>
+        <button class="btn btn-blue rounded-4 px-4">Add New Technician</button>
+      </div>
+      <div class="row g-4">
+        ${db.providerOps.team.map((member) => `
+          <div class="col-md-6 col-xl-4">
+            <div class="ag-card h-100">
+              <div class="d-flex align-items-center gap-3 mb-4">
+                <div class="rounded-4 bg-light d-flex align-items-center justify-content-center fw-bold text-dark" style="width:48px;height:48px;">${member.name[0]}</div>
+                <div>
+                  <div class="fw-bold">${member.name}</div>
+                  <div class="small text-muted">${member.skill}</div>
+                </div>
+                <span class="badge ${member.status === 'Active' ? 'bg-success-subtle text-success' : 'bg-secondary-subtle text-secondary'} ms-auto">${member.status}</span>
+              </div>
+              <div class="row g-3 border-top pt-3">
+                <div class="col-6"><div class="smaller text-muted">Today's Tasks</div><div class="fw-bold">${member.status === 'Offline' ? 0 : member.id === 'R01' ? 4 : 3} Jobs</div></div>
+                <div class="col-6"><div class="smaller text-muted">Rating</div><div class="fw-bold">4.${member.id === 'R01' ? 9 : member.id === 'R02' ? 7 : 8}</div></div>
+              </div>
+              <button class="btn btn-light border rounded-4 w-100 mt-4">View Performance Report</button>
+            </div>
+          </div>`).join('')}
+      </div>`, 'team');
+  }
+
+  function renderProviderVerificationPage() {
+    return renderSimpleDashboardPage('provider', 'Partner Verification', `
+      <div class="ag-card">
+        <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="rounded-4 d-flex align-items-center justify-content-center" style="width:52px;height:52px;background:#FFF3E0;color:#FF9800;">
+            <i class="fa-solid fa-shield-halved"></i>
+          </div>
+          <div>
+            <h4 class="fw-bold mb-1">Provider Verification</h4>
+            <div class="small text-muted">Submit business documents to unlock expert badges and higher-value bookings.</div>
+          </div>
+        </div>
+        <div class="row g-4">
+          ${[
+            ['NID / Passport', 'Scan of front and back side', 'Verified'],
+            ['Trade License', 'Valid government business license', 'Pending'],
+            ['Utility Bill', 'Proof of business location', 'Not Uploaded'],
+            ['Tax Certificate', 'e-TIN or tax return copy', 'Not Uploaded']
+          ].map((doc) => `
+            <div class="col-md-6">
+              <div class="rounded-4 border border-dashed p-4 h-100">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <div class="fw-bold">${doc[0]}</div>
+                    <div class="small text-muted mt-1">${doc[1]}</div>
+                  </div>
+                  <span class="badge ${doc[2] === 'Verified' ? 'bg-success-subtle text-success' : doc[2] === 'Pending' ? 'bg-primary-subtle text-primary' : 'bg-secondary-subtle text-secondary'}">${doc[2]}</span>
+                </div>
+                ${doc[2] === 'Not Uploaded' ? '<button class="btn btn-light border rounded-4 w-100 mt-4">Upload File</button>' : ''}
+              </div>
+            </div>`).join('')}
+        </div>
+      </div>`, 'kyc');
+  }
+
+  function renderProviderEarningsPage() {
+    return renderSimpleDashboardPage('provider', 'Earnings Report', `
+      <div class="row g-4 mb-4">
+        ${[
+          ['Today Profit', 'Tk 2,400', '#4CAF50'],
+          ['Weekly Gross', 'Tk 18,500', '#1E88E5'],
+          ['Total Payouts', 'Tk 142,000', '#7B1FA2']
+        ].map((card) => `<div class="col-md-4"><div class="ag-card"><div class="small text-muted mb-2">${card[0]}</div><div class="display-6 fw-extrabold" style="color:${card[2]};">${card[1]}</div></div></div>`).join('')}
+      </div>
+      <div class="ag-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h4 class="fw-bold mb-0">Recent Payouts</h4>
+          <button class="btn btn-blue rounded-4 px-4">Export PDF</button>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle mb-0">
+            <thead><tr><th>Payout ID</th><th>Period</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              ${[
+                ['PAY-421', 'Apr 20 - Apr 26', 'Tk 12,400', 'Transferred'],
+                ['PAY-420', 'Apr 13 - Apr 19', 'Tk 9,800', 'Transferred'],
+                ['PAY-419', 'Apr 06 - Apr 12', 'Tk 14,200', 'Transferred']
+              ].map((row) => `<tr><td class="fw-semibold">${row[0]}</td><td>${row[1]}</td><td class="fw-bold">${row[2]}</td><td><span class="badge bg-success-subtle text-success">${row[3]}</span></td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>`, 'earnings');
+  }
+
+  function renderProviderProfilePage() {
+    return renderSimpleDashboardPage('provider', 'Provider Profile', `
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="ag-card">
+            <div class="d-flex flex-column flex-lg-row gap-4">
+              <div class="text-center">
+                <div class="rounded-4 bg-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width:144px;height:144px;font-size:3rem;">&#127970;</div>
+                <button class="btn btn-blue rounded-4 w-100">Update Profile</button>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="fw-bold mb-1">Ruksana Services Ltd.</h3>
+                <div class="small text-muted mb-4">Dhanmondi, Dhaka | Joined 2024</div>
+                <div class="row g-3">
+                  ${[
+                    ['Owner Name', 'Ruksana Akter'],
+                    ['Business Type', 'Private Limited'],
+                    ['Contact Phone', '+880 1677-123456'],
+                    ['Support Email', 'help@ruksanaservices.com']
+                  ].map((field) => `
+                    <div class="col-md-6">
+                      <label class="small text-muted d-block mb-2">${field[0]}</label>
+                      <input class="form-control rounded-4 py-3" value="${field[1]}">
+                    </div>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-3">Operating Hours</h4>
+            <div class="d-grid gap-2">
+              <div class="d-flex justify-content-between"><span class="text-muted">Saturday - Thursday</span><span class="fw-bold">09:00 AM - 08:00 PM</span></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Friday</span><span class="fw-bold">Closed</span></div>
+            </div>
+          </div>
+          <div class="ag-card mt-4">
+            <h4 class="fw-bold mb-3">Coverage Areas</h4>
+            <div class="d-flex flex-wrap gap-2">
+              ${['Dhanmondi', 'Lalmatia', 'Mohammadpur', 'Tejgaon', 'Panthapath'].map((area) => `<span class="badge bg-light text-dark rounded-pill px-3 py-2">${area}</span>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`, 'profile');
+  }
+
+  function renderResourceAssignmentsPanel() {
+    return renderSimpleDashboardPage('resource', 'Assignments', `
+      <div class="ag-card">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="fw-bold mb-1">Today's Queue</h4>
+            <div class="small text-muted">Field technician job list with status and arrival windows.</div>
+          </div>
+          <span class="badge bg-warning-subtle text-warning">${db.resourceOps.assignments.length} jobs</span>
+        </div>
+        <div class="d-grid gap-3">
+          ${db.resourceOps.assignments.map((job) => `
+            <a href="resource-job-detail.html?id=${job.id}" class="text-decoration-none text-dark">
+              <div class="rounded-4 border p-3">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <div class="fw-bold">${job.service}</div>
+                    <div class="small text-muted mt-1">${job.address}</div>
+                    <div class="smaller text-muted mt-1">${job.time} | #${job.id}</div>
+                  </div>
+                  <span class="badge bg-warning-subtle text-warning">${job.status}</span>
+                </div>
+              </div>
+            </a>`).join('')}
+        </div>
+      </div>`, 'assignments');
+  }
+
+  function renderResourceHistoryPage() {
+    return renderSimpleDashboardPage('resource', 'Completed Jobs', `
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h4 class="fw-bold mb-0">Job History</h4>
+        <span class="badge bg-light text-muted">Total: 240 Jobs</span>
+      </div>
+      <div class="d-grid gap-3">
+        ${[
+          { id: 'JOB-938', service: 'Sofa Cleaning', client: 'Anika Islam', date: 'Yesterday', rating: '5.0', price: 'Tk 450' },
+          { id: 'JOB-935', service: 'AC Checkup', client: 'Mohammad Karim', date: '2 days ago', rating: '4.8', price: 'Tk 300' },
+          { id: 'JOB-930', service: 'Electric Repair', client: 'Laila Rahman', date: '3 days ago', rating: '5.0', price: 'Tk 200' }
+        ].map((job) => `
+          <div class="ag-card">
+            <div class="d-flex align-items-center gap-3">
+              <div class="rounded-4 d-flex align-items-center justify-content-center text-success" style="width:48px;height:48px;background:#E8F5E9;">
+                <i class="fa-solid fa-circle-check"></i>
+              </div>
+              <div class="flex-grow-1">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <div class="fw-bold">${job.service}</div>
+                    <div class="small text-muted">${job.client} | ${job.date}</div>
+                  </div>
+                  <div class="text-end">
+                    <div class="small fw-semibold text-warning">${job.rating}</div>
+                    <div class="smaller text-muted">${job.id}</div>
+                  </div>
+                </div>
+              </div>
+              <div class="text-end border-start ps-3">
+                <div class="fw-bold">${job.price}</div>
+                <div class="smaller text-muted">Earned</div>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>`, 'history');
+  }
+
+  function renderResourceMessagesPage() {
+    return renderSimpleDashboardPage('resource', 'Internal Messages', `
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="ag-card p-0 overflow-hidden">
+            <div class="p-4 border-bottom bg-light">
+              <h4 class="fw-bold mb-0">Chats</h4>
+            </div>
+            <div class="d-grid">
+              ${[
+                ['Provider Support', 'Payment processed...', '10m ago', true],
+                ['Team Hub', 'Arif: New job assigned...', '1h ago', false],
+                ['HR Dept', 'Please update your KYC...', '2d ago', false]
+              ].map((chat) => `
+                <div class="p-4 border-bottom ${chat[3] ? 'bg-warning-subtle' : ''}">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center text-white fw-bold" style="width:40px;height:40px;">${chat[0][0]}</div>
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between">
+                        <div class="small fw-semibold">${chat[0]}</div>
+                        <div class="smaller text-muted">${chat[2]}</div>
+                      </div>
+                      <div class="smaller text-muted mt-1">${chat[1]}</div>
+                    </div>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="ag-card">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+              <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle bg-warning" style="width:32px;height:32px;"></div>
+                <div class="fw-bold">Provider Support</div>
+              </div>
+              <span class="badge bg-success-subtle text-success">Online</span>
+            </div>
+            <div class="d-grid gap-3 mb-4">
+              <div class="rounded-4 bg-light p-3 small">Hi Arif, your weekly commission has been successfully transferred to your bKash wallet.</div>
+              <div class="rounded-4 bg-dark text-white p-3 small ms-auto" style="max-width:75%;">Got it. Thanks!</div>
+            </div>
+            <div class="d-flex gap-2">
+              <input class="form-control rounded-4 py-3" placeholder="Type a message...">
+              <button class="btn btn-warning rounded-4 px-4 text-white">Send</button>
+            </div>
+          </div>
+        </div>
+      </div>`, 'messages');
+  }
+
+  function renderResourceProfilePage() {
+    return renderSimpleDashboardPage('resource', 'My Profile', `
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="ag-card">
+            <div class="d-flex flex-column flex-lg-row gap-4 align-items-start">
+              <div class="text-center">
+                <div class="rounded-4 bg-light d-flex align-items-center justify-content-center mb-3" style="width:128px;height:128px;font-size:3rem;">&#128119;</div>
+                <div class="small fw-bold text-warning">Technician ID: 402</div>
+              </div>
+              <div class="flex-grow-1">
+                <h3 class="fw-bold mb-1">Arif Hossain</h3>
+                <div class="small text-muted mb-4">Senior Electrician | Expert Badge</div>
+                <div class="row g-3">
+                  ${[
+                    ['Work Experience', '4+ Years'],
+                    ['Verified Status', 'Full Access'],
+                    ['Primary Contact', '01712-334455'],
+                    ['Emergency Contact', '01611-223344']
+                  ].map((field) => `<div class="col-md-6"><div class="rounded-4 bg-light border p-3"><div class="smaller text-muted">${field[0]}</div><div class="fw-semibold mt-1">${field[1]}</div></div></div>`).join('')}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ag-card">
+            <h4 class="fw-bold mb-3">Account Preferences</h4>
+            <div class="d-grid gap-3">
+              ${[
+                ['Auto-accept high rated jobs', true],
+                ['Real-time location sharing', true],
+                ['Sound alerts for new bookings', false]
+              ].map((item) => `
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                  <span>${item[0]}</span>
+                  <div class="form-check form-switch m-0">
+                    <input class="form-check-input" type="checkbox" ${item[1] ? 'checked' : ''}>
+                  </div>
+                </div>`).join('')}
+            </div>
+          </div>
+        </div>
+      </div>`, 'profile');
+  }
+
+  function renderCustomerFindServicesPage() {
+    return renderSimpleDashboardPage('customer', 'Find Services', `
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+          <h4 class="fw-bold mb-1">Browse Providers</h4>
+          <div class="small text-muted">Filter by category, area, and expertise level.</div>
+        </div>
+        <a href="booking.html" class="btn btn-blue rounded-4 px-4">Book Now</a>
+      </div>
+      <div class="row g-4">
+        ${db.providers.slice(0, 6).map((provider) => `
+          <div class="col-md-6">
+            <a href="provider-profile.html?id=${provider.id}" class="text-decoration-none text-dark">
+              <div class="ag-card h-100">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="rounded-4 d-flex align-items-center justify-content-center text-white fw-bold" style="width:54px;height:54px;background:#1E88E5;">
+                    ${provider.name.split(' ').map((part) => part[0]).join('').slice(0, 2)}
+                  </div>
+                  <div class="flex-grow-1">
+                    <div class="fw-bold">${provider.name}</div>
+                    <div class="small text-muted text-capitalize">${provider.category} | ${provider.area}</div>
+                    <div class="smaller text-muted mt-1">Rating ${provider.rating} | ${provider.jobsCompleted} jobs</div>
+                  </div>
+                  <span class="badge ${provider.type === 'expert' ? 'bg-purple-soft text-dark' : 'bg-success-subtle text-success'} text-capitalize">${provider.type}</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mt-4 border-top pt-3">
+                  <div class="fw-bold text-primary-mirror">${T.currency(provider.price)} <span class="small text-muted">${provider.priceUnit}</span></div>
+                  <span class="small fw-semibold text-primary-mirror">Open profile</span>
+                </div>
+              </div>
+            </a>
+          </div>`).join('')}
+      </div>`, 'find');
+  }
+
+  function renderCustomerWalletPanel() {
+    return renderSimpleDashboardPage('customer', 'My Wallet', `
+      <div class="row g-4">
+        <div class="col-lg-4">
+          <div class="ag-card">
+            <div class="small text-muted mb-2">Current Balance</div>
+            <div class="display-6 fw-extrabold text-primary-mirror">${T.currency(db.wallet.currentBalance)}</div>
+            <div class="small text-muted mt-3">Pending Refund: ${T.currency(db.wallet.pendingRefund)}</div>
+          </div>
+          <div class="ag-card mt-4">
+            <h4 class="fw-bold mb-3">Payment Methods</h4>
+            <div class="d-grid gap-2">
+              ${['bKash', 'Nagad', 'Card EMI'].map((method) => `<div class="rounded-4 bg-light p-3 small fw-semibold">${method}</div>`).join('')}
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8">
+          <div class="ag-card">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+              <h4 class="fw-bold mb-0">Recent Transactions</h4>
+              <button class="btn btn-light border rounded-4 px-4">Export</button>
+            </div>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead><tr><th>ID</th><th>Method</th><th class="text-end">Amount</th></tr></thead>
+                <tbody>
+                  ${db.wallet.transactions.map((item) => `<tr><td class="fw-semibold">${item.id}</td><td>${item.method}</td><td class="text-end fw-bold">${T.currency(item.amount)}</td></tr>`).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>`, 'wallet');
+  }
+
+  function renderResourceDashboardPanel() {
+    return renderSimpleDashboardPage('resource', 'Field App', `
+      <div class="row g-4">
+        <div class="col-lg-8">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="fw-bold mb-0">My Schedule Today</h4>
+            <span class="badge bg-light text-muted">April 27, 2026</span>
+          </div>
+          <div class="d-grid gap-3">
+            ${[
+              { id: 'job-1', time: '10:00 AM', client: 'Rahim Ahmed', service: 'AC Maintenance', location: 'Gulshan 2, Road 14', status: 'Ready' },
+              { id: 'job-2', time: '01:30 PM', client: 'Sumi Akter', service: 'Basin Repair', location: 'Banani Block D', status: 'Upcoming' },
+              { id: 'job-3', time: '04:00 PM', client: 'Tanvir Hossain', service: 'Full Home Clean', location: 'Baridhara', status: 'Upcoming' }
+            ].map((job) => `
+              <a href="resource-job-detail.html?id=${job.id}" class="text-decoration-none text-dark">
+                <div class="ag-card">
+                  <div class="d-flex gap-3 align-items-start">
+                    <div class="d-flex flex-column align-items-center gap-2">
+                      <span class="badge bg-light text-dark">${job.time}</span>
+                      <div class="bg-light rounded-pill" style="width:4px;height:48px;"></div>
+                    </div>
+                    <div class="flex-grow-1">
+                      <div class="d-flex justify-content-between align-items-start gap-3">
+                        <div>
+                          <div class="fw-bold">${job.service}</div>
+                          <div class="small text-muted">${job.client}</div>
+                          <div class="small text-muted mt-2">${job.location}</div>
+                        </div>
+                        <span class="badge ${job.status === 'Ready' ? 'bg-warning-subtle text-warning' : 'bg-secondary-subtle text-secondary'}">${job.status}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </a>`).join('')}
+          </div>
+        </div>
+        <div class="col-lg-4">
+          <div class="ag-card text-white border-0" style="background:#22C55E;">
+            <div class="small text-white-50">Shift Status</div>
+            <div class="d-flex align-items-center gap-2 mt-1 mb-4">
+              <span class="rounded-circle bg-white" style="width:10px;height:10px;"></span>
+              <h4 class="fw-bold mb-0">Online & Active</h4>
+            </div>
+            <button class="btn btn-light rounded-4 w-100">Go Offline</button>
+          </div>
+          <div class="row g-3 mt-1">
+            ${[
+              ['Report Issue', 'fa-solid fa-triangle-exclamation', '#FEE2E2', '#EF4444'],
+              ['View Map', 'fa-solid fa-location-arrow', '#DBEAFE', '#2563EB']
+            ].map((item) => `
+              <div class="col-6">
+                <div class="ag-card text-center h-100">
+                  <div class="rounded-4 d-inline-flex align-items-center justify-content-center mb-3" style="width:40px;height:40px;background:${item[2]};color:${item[3]};"><i class="${item[1]}"></i></div>
+                  <div class="small fw-semibold">${item[0]}</div>
+                </div>
+              </div>`).join('')}
+          </div>
+          <div class="ag-card mt-4">
+            <h4 class="fw-bold mb-3">Performance Today</h4>
+            <div class="d-grid gap-3">
+              <div class="d-flex justify-content-between"><span class="text-muted">Jobs Done</span><span class="fw-bold">4</span></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Avg. Rating</span><span class="fw-bold">4.95</span></div>
+              <div class="d-flex justify-content-between"><span class="text-muted">Distance Covered</span><span class="fw-bold">12.4 km</span></div>
+            </div>
+          </div>
+        </div>
+      </div>`, 'dashboard');
   }
 
   function renderAdminUsersPage() {
@@ -1427,7 +2164,7 @@
       case 'booking-tracking':
         return renderSimpleWebsitePage('Booking Tracking', `Track order ${db.bookingTracking.orderId} through each service milestone.`, db.bookingTracking.steps.map((step, index) => ({ title: step, body: index === db.bookingTracking.currentStepIndex ? 'Current active stage' : 'Pending or completed milestone' })), 'home');
       case 'wallet':
-        return renderWallet();
+        return renderCustomerWalletPanel();
       case 'unauthorized':
         return renderUtility('403', 'You do not have permission to access that route with the current role.', 'access.html', 'Switch Role');
       case 'session-expired':
@@ -1441,9 +2178,7 @@
       case 'home':
         return renderCustomerDashboard();
       case 'providers':
-        return renderProvidersPage();
-      case 'provider-profile':
-        return renderBookingForm();
+        return renderCustomerFindServicesPage();
       case 'book':
         return renderBookingForm();
       case 'payment':
@@ -1451,31 +2186,39 @@
       case 'confirmation':
         return renderSimpleDashboardPage('customer', 'Booking Confirmed', `<div class="ag-card text-center"><div class="display-5 mb-3">Booking Confirmed</div><p class="text-muted">Your provider has been notified and tracking is now available.</p><div class="d-flex justify-content-center gap-3 mt-4"><a href="my-bookings.html" class="btn btn-blue rounded-4 px-4">View Bookings</a><a href="home.html" class="btn btn-light border-light rounded-4 px-4">Back Home</a></div></div>`);
       case 'my-bookings':
-        return renderSimpleDashboardPage('customer', 'My Bookings', `<div class="d-grid gap-3">${db.bookings.map((booking)=>`<div class="ag-card"><div class="d-flex justify-content-between mb-2"><div><div class="fw-bold">${booking.service}</div><div class="small text-muted">${booking.providerName} | ${booking.date} ${booking.time}</div></div><span class="badge bg-blue-soft rounded-pill">${booking.status}</span></div><div class="small text-muted">${booking.address}</div></div>`).join('')}</div>`);
+        return renderCustomerBookingsPage();
       case 'claims-center':
-        return renderSimpleDashboardPage('customer', 'Claims Center', `<div class="row g-4"><div class="col-lg-5"><div class="ag-card"><h4 class="fw-bold mb-4">Submit a Claim</h4><div class="d-grid gap-3"><select class="form-select rounded-4 py-3"><option>Poor workmanship</option><option>Damage</option><option>Incomplete work</option></select><textarea class="form-control rounded-4" rows="5" placeholder="Describe the issue"></textarea><button class="btn btn-blue rounded-4 py-3">Submit Claim</button></div></div></div><div class="col-lg-7"><div class="ag-card"><h4 class="fw-bold mb-4">Claim Status</h4><div class="d-grid gap-3">${db.claims.map((claim)=>`<div class="border rounded-4 p-3"><div class="fw-bold">${claim.id}</div><div class="small text-muted">${claim.reason} | ${claim.bookingId}</div><div class="small mt-2">${claim.stage} | ${claim.createdAt}</div></div>`).join('')}</div></div></div></div>`);
+        return renderCustomerClaimsPage();
       case 'messages':
-        return renderSimpleDashboardPage('customer', 'Messages', `<div class="d-grid gap-3">${db.threads.map((thread)=>`<div class="ag-card"><div class="d-flex justify-content-between"><div><div class="fw-bold">${thread.bookingId}</div><div class="small text-muted">${thread.participants.join(' | ')}</div></div><span class="badge bg-blue-soft rounded-pill">${thread.unreadCount} unread</span></div><div class="small mt-3">${thread.lastMessage}</div></div>`).join('')}</div>`);
+        return renderCustomerMessagesPage();
       case 'customer-profile':
       case 'more':
         return renderCustomerProfileMirror();
       case 'provider-app':
         return renderProviderDashboard();
+      case 'provider-bookings':
+        return renderProviderBookingsPage();
       case 'provider-booking-detail':
         return renderSimpleDashboardPage('provider', 'Provider Booking Detail', `<div class="ag-card"><h4 class="fw-bold mb-4">Booking PB001</h4><p class="text-muted">Customer: Nusrat Jahan | Deep Cleaning | 10:30 AM - 12:30 PM | Uttara Sector 7</p><div class="d-flex gap-3 mt-4"><a href="provider-assignment.html" class="btn btn-blue rounded-4">Assign Resource</a><button class="btn btn-light border-light rounded-4">Mark Contacted</button></div></div>`);
       case 'provider-kyc':
-        return renderSimpleDashboardPage('provider', 'Provider Verification', `<div class="row g-4"><div class="col-lg-6"><div class="ag-card"><h4 class="fw-bold mb-4">Compliance Status</h4><div class="d-grid gap-3">${db.providerOps.kycFields.map((field)=>`<div><label class="small text-muted mb-2 d-block">${field.placeholder}</label><input class="form-control rounded-4 py-3" placeholder="${field.placeholder}"></div>`).join('')}</div></div></div><div class="col-lg-6"><div class="ag-card"><h4 class="fw-bold mb-4">Insurance & Background</h4><p class="text-muted small mb-0">Police cleared, insurance verified, and ID checks are tracked here for the Bootstrap mirror.</p></div></div></div>`);
+        return renderProviderVerificationPage();
       case 'provider-team':
-        return renderSimpleDashboardPage('provider', 'Team Management', `<div class="d-grid gap-3">${db.providerOps.team.map((member)=>`<div class="ag-card d-flex justify-content-between align-items-center"><div><div class="fw-bold">${member.name}</div><div class="small text-muted">${member.skill}</div></div><span class="badge bg-blue-soft rounded-pill">${member.status}</span></div>`).join('')}</div>`);
+        return renderProviderTeamPage();
       case 'provider-assignment':
         return renderSimpleDashboardPage('provider', 'Assign Resource', `<div class="d-grid gap-3">${db.providerOps.resources.map((resource)=>`<div class="ag-card d-flex justify-content-between align-items-center"><div><div class="fw-bold">${resource.name}</div><div class="small text-muted">${resource.proximity} | ${resource.availability}</div></div><button class="btn btn-blue rounded-4 px-4">Assign</button></div>`).join('')}</div>`);
       case 'provider-earnings-report':
-        return renderSimpleDashboardPage('provider', 'Earnings Report', `<div class="row g-4">${[{label:'Gross Month',value:T.currency(db.providerOps.earnings.grossMonth)},{label:'Net After Commission',value:T.currency(db.providerOps.earnings.netAfterCommission)},{label:'Pending Settlement',value:T.currency(db.providerOps.earnings.pendingSettlement)}].map((card)=>`<div class="col-md-4"><div class="ag-card"><div class="small text-muted mb-2">${card.label}</div><div class="display-6 fw-extrabold">${card.value}</div></div></div>`).join('')}</div>`);
+        return renderProviderEarningsPage();
+      case 'provider-profile':
+        return renderProviderProfilePage();
       case 'resource-app':
       case 'technician':
-        return renderResourceDashboard();
+        return renderResourceDashboardPanel();
       case 'resource-assignments':
-        return renderSimpleDashboardPage('resource', 'Resource Assignments', `<div class="d-grid gap-3">${db.resourceOps.assignments.map((job)=>`<a href="resource-job-detail.html?id=${job.id}" class="text-decoration-none text-dark"><div class="ag-card d-flex justify-content-between align-items-center"><div><div class="fw-bold">${job.service}</div><div class="small text-muted">${job.address} | ${job.time}</div></div><span class="badge bg-orange-soft rounded-pill">${job.status}</span></div></a>`).join('')}</div>`);
+        return renderResourceAssignmentsPanel();
+      case 'resource-history':
+        return renderResourceHistoryPage();
+      case 'resource-messages':
+        return renderResourceMessagesPage();
       case 'resource-job-detail':
       case 'technician-job-detail':
         return renderSimpleDashboardPage('resource', 'Job Detail', `<div class="ag-card"><h4 class="fw-bold mb-4">${db.resourceOps.jobDetail.service}</h4><div class="small text-muted mb-2">${db.resourceOps.jobDetail.customer}</div><div class="small text-muted mb-4">${db.resourceOps.jobDetail.address} | ${db.resourceOps.jobDetail.slot}</div><div class="d-flex gap-3"><a href="resource-proof-upload.html?id=RS001" class="btn btn-blue rounded-4">Upload Proof</a><a href="resource-issue-report.html?id=RS001" class="btn btn-light border-light rounded-4">Report Issue</a></div></div>`);
@@ -1484,7 +2227,7 @@
       case 'resource-issue-report':
         return renderSimpleDashboardPage('resource', 'Issue Report', `<div class="ag-card"><div class="d-grid gap-3"><select class="form-select rounded-4 py-3">${db.resourceOps.issueReasons.map((reason)=>`<option>${reason}</option>`).join('')}</select><textarea class="form-control rounded-4" rows="5" placeholder="Describe the issue"></textarea><a href="resource-job-detail.html?id=RS001" class="btn btn-blue rounded-4 py-3">Submit Issue</a></div></div>`);
       case 'resource-profile':
-        return renderSimpleDashboardPage('resource', 'Resource Profile', `<div class="ag-card"><h4 class="fw-bold mb-4">${db.resourceOps.profile.name}</h4><div class="row g-4"><div class="col-md-6"><div class="small text-muted mb-2">Role</div><div class="fw-bold">${db.resourceOps.profile.roleTitle}</div></div><div class="col-md-6"><div class="small text-muted mb-2">Technician ID</div><div class="fw-bold">${db.resourceOps.profile.technicianId}</div></div><div class="col-md-6"><div class="small text-muted mb-2">Zone</div><div class="fw-bold">${db.resourceOps.profile.zone}</div></div><div class="col-md-6"><div class="small text-muted mb-2">Average Rating</div><div class="fw-bold">${db.resourceOps.profile.averageRating}</div></div></div></div>`);
+        return renderResourceProfilePage();
       case 'admin':
         return renderAdminDashboard();
       case 'admin-users':

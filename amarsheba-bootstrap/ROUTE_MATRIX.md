@@ -34,7 +34,7 @@ This folder mirrors the TypeScript app routes with static HTML entry files plus 
 - `/splash` -> `splash.html`
 - `/login` -> `login.html`
 - `/home` -> `home.html`
-- `/providers` -> `providers.html`
+- `/providers` -> `providers.html` (customer panel find-services mirror)
 - `/provider/:id` -> `provider-profile.html?id=...`
 - `/book` -> `book.html`
 - `/payment` -> `payment.html`
@@ -48,16 +48,20 @@ This folder mirrors the TypeScript app routes with static HTML entry files plus 
 ## Provider app
 
 - `/provider-app` -> `provider-app.html`
+- `/provider/bookings` -> `provider-bookings.html`
 - `/provider/booking/:id` -> `provider-booking-detail.html?id=...`
 - `/provider/kyc` -> `provider-kyc.html`
 - `/provider/team` -> `provider-team.html`
 - `/provider/assignment` -> `provider-assignment.html`
 - `/provider/earnings-report` -> `provider-earnings-report.html`
+- `/provider/:id` -> `provider-profile.html?id=...`
 
 ## Resource app
 
 - `/resource-app` -> `resource-app.html`
 - `/resource/assignments` -> `resource-assignments.html`
+- `/resource/history` -> `resource-history.html`
+- `/resource/messages` -> `resource-messages.html`
 - `/resource/job/:id` -> `resource-job-detail.html?id=...`
 - `/resource/job/:id/proof` -> `resource-proof-upload.html?id=...`
 - `/resource/job/:id/issue` -> `resource-issue-report.html?id=...`
